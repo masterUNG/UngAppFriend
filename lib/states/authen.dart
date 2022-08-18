@@ -1,13 +1,26 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ungappfriend/models/user_model.dart';
 import 'package:ungappfriend/states/create_account.dart';
 import 'package:ungappfriend/utility/my_constant.dart';
+import 'package:ungappfriend/utility/my_dialog.dart';
 import 'package:ungappfriend/widgets/show_button.dart';
 import 'package:ungappfriend/widgets/show_form.dart';
 import 'package:ungappfriend/widgets/show_image.dart';
 import 'package:ungappfriend/widgets/show_text.dart';
 
-class Authen extends StatelessWidget {
+class Authen extends StatefulWidget {
   const Authen({super.key});
+
+  @override
+  State<Authen> createState() => _AuthenState();
+}
+
+class _AuthenState extends State<Authen> {
+  String? user, password;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +56,14 @@ class Authen extends StatelessWidget {
         children: [
           ShowButton(
             label: 'SingIn',
-            pressFunc: () {},
+            pressFunc: () {
+              if ((user?.isEmpty ?? true) || (password?.isEmpty ?? true)) {
+                MyDialog(context: context).normalDialog(
+                    title: 'Have Space', subTitle: 'Please Fill All Blank');
+              } else {
+                processAuthen();
+              }
+            },
           ),
           const SizedBox(
             width: 4,
@@ -71,7 +91,9 @@ class Authen extends StatelessWidget {
         iconData: Icons.lock_outline,
         obsceu: true,
         hint: 'Password:',
-        changeFunc: (String string) {},
+        changeFunc: (String string) {
+          password = string.trim();
+        },
       ),
     );
   }
@@ -83,7 +105,9 @@ class Authen extends StatelessWidget {
       child: ShowForm(
         iconData: Icons.person_outline,
         hint: 'User:',
-        changeFunc: (String string) {},
+        changeFunc: (String string) {
+          user = string.trim();
+        },
       ),
     );
   }
@@ -105,5 +129,49 @@ class Authen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> processAuthen() async {
+    String path =
+        'https://www.androidthai.in.th/fluttertraining/getUserWhereUserUng.php?isAdd=true&user=$user';
+    await Dio().get(path).then((value) {
+      if (value.toString() == 'null') {
+        MyDialog(context: context).normalDialog(
+            title: 'User False', subTitle: 'No $user in my Database');
+      } else {
+        print('value ==> $value');
+
+        var result = json.decode(value.data);
+        print('result ==> $result');
+
+        for (var element in result) {
+          UserModel userModel = UserModel.fromMap(element);
+
+          print(
+              'password ==> $password, passwordModel ==> ${userModel.password}');
+
+          if (password == userModel.password) {
+            //password true
+            processSaveUser(userModel: userModel);
+          } else {
+            //password false
+            MyDialog(context: context).normalDialog(
+                title: 'Password False',
+                subTitle: 'Please Try Again Password False');
+          }
+        }
+      }
+    });
+  }
+
+  Future<void> processSaveUser({required UserModel userModel}) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString('id', userModel.id);
+    sharedPreferences.setString('name', userModel.name);
+    sharedPreferences.setString('avatar', userModel.avatar);
+    sharedPreferences.setString('token', userModel.token);
+
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/listAllMember', (route) => false);
   }
 }

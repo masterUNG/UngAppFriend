@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "175624465242",
+    "project_id": "ungappfriend",
+    "storage_bucket": "ungappfriend.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175624465242:android:d87465c7202c6657ad2163",
+        "android_client_info": {
+          "package_name": "com.flutterthailand.ungappfriend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "175624465242-ulqhb6g4l06qjqm44jbvfaoescnq0uvk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBm9HGc5arpoHWreGfnTMzAwwTMy3g5Rkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "175624465242-ulqhb6g4l06qjqm44jbvfaoescnq0uvk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

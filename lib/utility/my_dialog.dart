@@ -11,7 +11,12 @@ class MyDialog {
     required this.context,
   });
 
-  void normalDialog({required String title, required String subTitle}) {
+  void normalDialog({
+    required String title,
+    required String subTitle,
+    String? label,
+    Function()? pressFunc,
+  }) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -27,8 +32,11 @@ class MyDialog {
           subtitle: ShowText(text: subTitle),
         ),
         actions: [
+          label == null
+              ? const SizedBox()
+              : ShowTextButton(label: label, pressFunc: pressFunc!),
           ShowTextButton(
-            label: 'OK',
+            label: label == null ? 'OK' : 'Cancel',
             pressFunc: () {
               Navigator.pop(context);
             },
