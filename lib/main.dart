@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ungappfriend/states/authen.dart';
@@ -16,6 +17,9 @@ String? firstState;
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverride();
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   var user = sharedPreferences.getString('id');
   print('user ==> $user');
@@ -25,7 +29,7 @@ Future<void> main() async {
     runApp(MyApp());
   } else {
     firstState = '/listAllMember';
-     runApp(MyApp());
+    runApp(MyApp());
   }
 }
 
@@ -34,7 +38,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.green,
         appBarTheme: AppBarTheme(
@@ -43,8 +48,8 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-     routes: map,
-     initialRoute: firstState,
+      routes: map,
+      initialRoute: firstState,
     );
   }
 }
